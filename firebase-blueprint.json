@@ -1,0 +1,58 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Historical profile and game state for a player.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "fullName": { "type": "string" },
+        "studentClass": { "type": "string" },
+        "email": { "type": "string" },
+        "dinar": { "type": "number" },
+        "ilmu": { "type": "number" },
+        "iman": { "type": "number" },
+        "pahala": { "type": "number" },
+        "level": { "type": "number" },
+        "buildings": {
+          "type": "object",
+          "description": "Map of building IDs to their current levels."
+        },
+        "hasCompletedTutorial": { "type": "boolean" },
+        "dailyMissions": {
+          "type": "object",
+          "properties": {
+            "lastReset": { "type": "string", "format": "date-time" },
+            "completed": { "type": "array", "items": { "type": "string" } },
+            "progress": { "type": "object" }
+          }
+        },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "displayName", "dinar", "ilmu", "iman", "pahala", "level", "buildings", "hasCompletedTutorial"]
+    },
+    "LeaderboardEntry": {
+      "title": "Leaderboard Entry",
+      "description": "Realtime score for the global leaderboard.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "username": { "type": "string" },
+        "score": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "username", "score"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Stores individual player game state."
+    },
+    "leaderboard/{userId}": {
+      "schema": "LeaderboardEntry",
+      "description": "Stores scores for the leaderboard."
+    }
+  }
+}

@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-islamic-green: #2e7d32;
+  --color-islamic-gold: #c5a059;
+  --color-sand: #f5f2ed;
+  --color-ink: #1a1a1a;
+}
+
+@layer base {
+  body {
+    @apply bg-sand text-ink font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .btn-gold {
+    @apply bg-islamic-gold text-white px-6 py-2 rounded-full font-medium transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-green {
+    @apply bg-islamic-green text-white px-6 py-2 rounded-full font-medium transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .card-premium {
+    @apply bg-white rounded-2xl border border-islamic-gold/20 shadow-sm p-6;
+  }
+}
+

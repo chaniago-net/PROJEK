@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global Helpers
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    
+    // Validation Blueprints
+    function isValidUser(data) {
+      return data.keys().hasAll(['userId', 'displayName', 'dinar', 'ilmu', 'iman', 'pahala', 'level', 'buildings', 'email', 'hasCompletedTutorial'])
+          && data.userId is string
+          && data.displayName is string
+          && data.email is string
+          && data.dinar is number
+          && data.ilmu is number
+          && data.iman is number
+          && data.pahala is number
+          && data.level is number
+          && data.buildings is map
+          && (data.get('fullName', '') is string)
+          && (data.get('studentClass', '') is string)
+          && data.hasCompletedTutorial is bool
+          && (data.get('dailyMissions', null) == null || data.dailyMissions is map)
+          && data.userId == request.auth.uid;
+    }
+
+    function isValidLeaderboard(data) {
+      return data.keys().hasAll(['userId', 'username', 'score'])
+          && data.userId is string
+          && data.username is string
+          && data.score is number
+          && (data.get('fullName', '') is string)
+          && (data.get('studentClass', '') is string)
+          && data.userId == request.auth.uid;
+    }
+
+    // Collection: Users
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if isOwner(userId) && isValidUser(incoming())
+        && (
+          // Action: Economy/Game update or Profile update
+          incoming().diff(existing()).affectedKeys().hasAll(['updatedAt']) 
+          && (
+            incoming().diff(existing()).affectedKeys().hasOnly(['dinar', 'ilmu', 'iman', 'pahala', 'level', 'buildings', 'hasCompletedTutorial', 'updatedAt', 'fullName', 'studentClass', 'dailyMissions'])
+            || incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'updatedAt', 'fullName', 'studentClass'])
+          )
+        );
+      allow delete: if false; 
+    }
+
+    // Collection: Leaderboard
+    match /leaderboard/{userId} {
+      allow list: if isSignedIn(); // Allow anyone signed in to see the board
+      allow get: if isSignedIn();
+      allow create: if isOwner(userId) && isValidLeaderboard(incoming());
+      allow update: if isOwner(userId) && isValidLeaderboard(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['score', 'username', 'updatedAt', 'fullName', 'studentClass']);
+      allow delete: if false;
+    }
+  }
+}
