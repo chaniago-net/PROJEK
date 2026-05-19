@@ -11,11 +11,12 @@ import { Tutorial } from './components/Tutorial';
 import { ProfileSetupModal } from './components/ProfileSetupModal';
 import { MissionBoard } from './components/MissionBoard';
 import { DailyLuck } from './components/DailyLuck';
+import { SekiMaterialModal } from './components/SekiMaterialModal';
 import { AiUstaz } from './components/AiUstaz';
 import { BattleMode } from './components/BattleMode';
 import { BUILDINGS_DATA, UserStats, Buildings } from './types/game';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, GraduationCap, Sword, ShieldCheck, Map as MapIcon, Scroll, Gift, Bell } from 'lucide-react';
+import { Sparkles, GraduationCap, Sword, ShieldCheck, Map as MapIcon, Scroll, Gift, Bell, Book } from 'lucide-react';
 import { cn } from './lib/utils';
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [isMissionBoardOpen, setIsMissionBoardOpen] = useState(false);
   const [isDailyLuckOpen, setIsDailyLuckOpen] = useState(false);
+  const [isSekiMaterialOpen, setIsSekiMaterialOpen] = useState(false);
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'empire' | 'battle'>('empire');
   const [activeCategory, setActiveCategory] = useState<'all' | 'religion' | 'education' | 'economy' | 'social' | 'defense'>('all');
@@ -176,14 +178,14 @@ export default function App() {
         {activeTab === 'empire' ? (
           <div className="space-y-12">
             <header className="flex flex-col md:flex-row justify-between items-center gap-8">
-              <div className="text-center md:text-left">
+              <div className="text-center md:text-left flex-1">
                 <h1 className="text-5xl font-serif mb-2 italic">Kota {stats.fullName || stats.displayName}</h1>
                 <div className="flex flex-wrap gap-3 justify-center md:justify-start items-center">
                   <p className="bg-white/60 px-3 py-1 rounded-lg text-gray-500 uppercase tracking-widest font-bold text-[10px] border border-white">
-                    Level: {stats.level}
+                    Peringkat: Khalifah Muda
                   </p>
                   <p className="bg-islamic-gold/10 px-3 py-1 rounded-lg text-islamic-gold uppercase tracking-widest font-bold text-[10px] border border-islamic-gold/20">
-                    Kelas: {stats.studentClass || 'N/A'}
+                    Kelas: {stats.studentClass || 'N/A'} (No: {stats.absentNo || '-'})
                   </p>
                   <div className="flex items-center gap-2 bg-islamic-green/5 px-4 py-1.5 rounded-full border border-islamic-green/10 max-w-[200px] md:max-w-xs overflow-hidden">
                     <Bell className="w-3 h-3 text-islamic-green shrink-0 animate-pulse" />
@@ -193,19 +195,76 @@ export default function App() {
                   </div>
                 </div>
               </div>
-              <button 
-                onClick={() => setIsQuizOpen(true)}
-                className="btn-green flex items-center gap-3 px-8 py-4 text-lg shadow-xl shadow-islamic-green/20"
-              >
-                <GraduationCap className="w-6 h-6" />
-                Ambil Kuis PAI
-              </button>
             </header>
 
-            <GameWorld 
-              buildings={stats.buildings} 
-              onSelectBuilding={(id) => setSelectedBuildingId(id)}
-            />
+            {/* LEARNING HUB - NOW FRONT AND CENTER AS REQUESTED */}
+            <section className="bg-white/80 backdrop-blur-xl rounded-[3rem] p-8 md:p-12 shadow-2xl border-4 border-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-islamic-gold/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl font-serif"></div>
+              
+              <div className="relative z-10">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                  <div>
+                    <p className="text-islamic-gold font-black uppercase tracking-[0.4em] text-[10px] mb-4">Pusat Pembelajaran Interaktif</p>
+                    <h2 className="text-4xl md:text-5xl font-serif italic text-islamic-green">Ayo Bertumbuh!</h2>
+                  </div>
+                  <p className="text-gray-400 text-sm max-w-sm">Fokus utama kita adalah pengayaan materi dan evaluasi adab untuk membangun peradaban yang mulia.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Pustaka SKI */}
+                  <motion.button 
+                    whileHover={{ y: -5, scale: 1.02 }}
+                    onClick={() => setIsSekiMaterialOpen(true)}
+                    className="flex items-center gap-6 p-8 rounded-[2.5rem] bg-amber-500 text-white shadow-xl shadow-amber-500/20 group relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 p-4 opacity-10 scale-150 rotate-12 group-hover:rotate-45 transition-transform">
+                      <Book size={120} />
+                    </div>
+                    <div className="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center shrink-0 border border-white/30">
+                      <Book className="w-10 h-10 group-hover:rotate-12 transition-transform" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-70 mb-1">Materi Pembelajaran</p>
+                      <h3 className="text-2xl md:text-3xl font-serif italic mb-2">Pustaka SKI XI</h3>
+                      <p className="text-xs opacity-80 leading-relaxed max-w-[180px]">Pelajari sejarah kejayaan Islam untuk inspirasi kotamu.</p>
+                    </div>
+                  </motion.button>
+
+                  {/* Kuis PAI */}
+                  <motion.button 
+                    whileHover={{ y: -5, scale: 1.02 }}
+                    onClick={() => setIsQuizOpen(true)}
+                    className="flex items-center gap-6 p-8 rounded-[2.5rem] bg-islamic-green text-white shadow-xl shadow-islamic-green/20 group relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 p-4 opacity-10 scale-150 rotate-12 group-hover:rotate-45 transition-transform">
+                      <GraduationCap size={120} />
+                    </div>
+                    <div className="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center shrink-0 border border-white/30">
+                      <GraduationCap className="w-10 h-10 group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-70 mb-1">Evaluasi Adab</p>
+                      <h3 className="text-2xl md:text-3xl font-serif italic mb-2">Mulai Kuis PAI</h3>
+                      <p className="text-xs opacity-80 leading-relaxed max-w-[180px]">Uji pemahamanmu dan dapatkan Dinar & Pahala berlimpah.</p>
+                    </div>
+                  </motion.button>
+                </div>
+              </div>
+            </section>
+
+            {/* VISUALISASI KOTA - NOW SECONDARY */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-4 px-6">
+                <div className="h-px bg-islamic-gold/20 flex-1" />
+                <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-400">Visualisasi Peradaban 3D</h3>
+                <div className="h-px bg-islamic-gold/20 flex-1" />
+              </div>
+              
+              <GameWorld 
+                buildings={stats.buildings} 
+                onSelectBuilding={(id) => setSelectedBuildingId(id)}
+              />
+            </div>
 
             <div className="flex flex-col md:flex-row gap-8 items-start">
               {/* Left Column: Building Filter & Cards */}
@@ -301,12 +360,7 @@ export default function App() {
 
       {/* Modals */}
       <AnimatePresence>
-        {isProfileIncomplete && (
-          <ProfileSetupModal 
-            onComplete={(fullName, studentClass) => updateStats({ fullName, studentClass })} 
-          />
-        )}
-        {(!isProfileIncomplete && !stats.hasCompletedTutorial && !tutorialHiddenOverride) && (
+        {(!stats.hasCompletedTutorial && !tutorialHiddenOverride) && (
           <Tutorial
             key="tutorial-step"
             onComplete={handleTutorialComplete}
@@ -339,6 +393,12 @@ export default function App() {
             key="daily-luck"
             onReward={(reward) => updateStats({ dinar: stats.dinar + reward.dinar, pahala: stats.pahala + reward.pahala })}
             onClose={() => setIsDailyLuckOpen(false)}
+          />
+        )}
+        {isSekiMaterialOpen && (
+          <SekiMaterialModal 
+            key="seki-material-modal"
+            onClose={() => setIsSekiMaterialOpen(false)}
           />
         )}
         {selectedBuildingId && (

@@ -817,19 +817,19 @@ const Scene: React.FC<{ buildings: Buildings; onSelectBuilding: (id: string) => 
   const decorativePalms = useMemo(() => {
     const items = [];
     // Tidy rows along the vertical road
-    for (let z = -40; z <= 40; z += 5) {
+    for (let z = -60; z <= 60; z += 6) {
       if (Math.abs(z) < 3) continue;
       items.push(<PalmTree key={`p-v1-${z}`} position={[2.8, 0, z]} />);
       items.push(<PalmTree key={`p-v2-${z}`} position={[-2.8, 0, z]} />);
       
       // Outer rows for more density in lush areas
-      if (z > 5 && z < 25) {
-        items.push(<PalmTree key={`p-v3-${z}`} position={[6, 0, z]} />);
-        items.push(<PalmTree key={`p-v4-${z}`} position={[-6, 0, z]} />);
+      if (Math.abs(z) > 10 && Math.abs(z) < 40) {
+        items.push(<PalmTree key={`p-v3-${z}`} position={[8, 0, z]} />);
+        items.push(<PalmTree key={`p-v4-${z}`} position={[-8, 0, z]} />);
       }
     }
     // Tidy rows along the horizontal road
-    for (let x = -40; x <= 40; x += 5) {
+    for (let x = -60; x <= 60; x += 6) {
       if (Math.abs(x) < 3) continue;
       items.push(<PalmTree key={`p-h1-${x}`} position={[x, 0, 2.8]} />);
       items.push(<PalmTree key={`p-h2-${x}`} position={[x, 0, -2.8]} />);
@@ -975,8 +975,10 @@ const Scene: React.FC<{ buildings: Buildings; onSelectBuilding: (id: string) => 
   }, []);
 
   const streetLamps = useMemo(() => [
-    [2, 0, 2], [-2, 0, 2], [2, 0, -2], [-2, 0, -2],
-    [8, 0, 1.5], [-8, 0, 1.5], [1.5, 0, 8], [1.5, 0, -8]
+    [2.3, 0, 2.3], [-2.3, 0, 2.3], [2.3, 0, -2.3], [-2.3, 0, -2.3],
+    [10, 0, 1.8], [-10, 0, 1.8], [1.8, 0, 10], [1.8, 0, -10],
+    [20, 0, 1.8], [-20, 0, 1.8], [1.8, 0, 20], [1.8, 0, -20],
+    [0, 0, 25], [25, 0, 0], [-25, 0, 0]
   ].map((pos, i) => (
     <StreetLamp key={`lamp-${i}`} position={pos as [number, number, number]} />
   )), []);
@@ -1057,34 +1059,34 @@ const Scene: React.FC<{ buildings: Buildings; onSelectBuilding: (id: string) => 
 
       {/* Render Buildings */}
       <Suspense fallback={null}>
-        {/* Northwest Quadrant: Education & Science (x < -4, z < -4) */}
-        <BuildingModel type="madrasah" level={buildings.madrasah} position={[-6, 0, -6]} onSelect={onSelectBuilding} />
-        <BuildingModel type="perpustakaan" level={buildings.perpustakaan} position={[-11, 0, -6]} onSelect={onSelectBuilding} />
-        <BuildingModel type="universitas" level={buildings.universitas} position={[-17, 0, -8]} onSelect={onSelectBuilding} />
-        <BuildingModel type="observatorium" level={buildings.observatorium} position={[-12, 0, -12]} onSelect={onSelectBuilding} />
-        <BuildingModel type="pusatSeni" level={buildings.pusatSeni || 0} position={[-7, 0, -11]} onSelect={onSelectBuilding} />
+        {/* Northwest Quadrant: Education & Science (Orderly Grid) */}
+        <BuildingModel type="madrasah" level={buildings.madrasah} position={[-8, 0, -8]} onSelect={onSelectBuilding} />
+        <BuildingModel type="perpustakaan" level={buildings.perpustakaan} position={[-16, 0, -8]} onSelect={onSelectBuilding} />
+        <BuildingModel type="universitas" level={buildings.universitas} position={[-8, 0, -16]} onSelect={onSelectBuilding} />
+        <BuildingModel type="observatorium" level={buildings.observatorium} position={[-16, 0, -16]} onSelect={onSelectBuilding} />
+        <BuildingModel type="pusatSeni" level={buildings.pusatSeni || 0} position={[-12, 0, -12]} onSelect={onSelectBuilding} />
         
-        {/* Northeast Quadrant: Economic (x > 4, z < -4) */}
-        <BuildingModel type="baitulMal" level={buildings.baitulMal} position={[6, 0, -6]} onSelect={onSelectBuilding} />
-        <BuildingModel type="pasarSyariah" level={buildings.pasarSyariah} position={[12, 0, -6]} onSelect={onSelectBuilding} />
-        <BuildingModel type="bazaarBesar" level={buildings.bazaarBesar} position={[18, 0, -8]} onSelect={onSelectBuilding} />
-        <BuildingModel type="irigasiPertanian" level={buildings.irigasiPertanian} position={[15, 0, -16]} onSelect={onSelectBuilding} />
+        {/* Northeast Quadrant: Economic (Orderly Grid) */}
+        <BuildingModel type="baitulMal" level={buildings.baitulMal} position={[8, 0, -8]} onSelect={onSelectBuilding} />
+        <BuildingModel type="pasarSyariah" level={buildings.pasarSyariah} position={[16, 0, -8]} onSelect={onSelectBuilding} />
+        <BuildingModel type="bazaarBesar" level={buildings.bazaarBesar} position={[8, 0, -16]} onSelect={onSelectBuilding} />
+        <BuildingModel type="irigasiPertanian" level={buildings.irigasiPertanian} position={[16, 0, -16]} onSelect={onSelectBuilding} />
         
-        {/* Southwest Quadrant: Religious & Spiritual (x < -4, z > 4) */}
-        <BuildingModel type="masjid" level={buildings.masjid} position={[-6, 0, 6]} onSelect={onSelectBuilding} />
-        <BuildingModel type="masjidRaya" level={buildings.masjidRaya} position={[-14, 0, 8]} onSelect={onSelectBuilding} />
-        <BuildingModel type="menaraAdzan" level={buildings.menaraAdzan} position={[-6, 0, 11]} onSelect={onSelectBuilding} />
-        <BuildingModel type="pesantren" level={buildings.pesantren} position={[-14, 0, 16]} onSelect={onSelectBuilding} />
+        {/* Southwest Quadrant: Religious & Spiritual (Orderly Grid) */}
+        <BuildingModel type="masjid" level={buildings.masjid} position={[-8, 0, 8]} onSelect={onSelectBuilding} />
+        <BuildingModel type="masjidRaya" level={buildings.masjidRaya} position={[-16, 0, 8]} onSelect={onSelectBuilding} />
+        <BuildingModel type="menaraAdzan" level={buildings.menaraAdzan} position={[-8, 0, 16]} onSelect={onSelectBuilding} />
+        <BuildingModel type="pesantren" level={buildings.pesantren} position={[-16, 0, 16]} onSelect={onSelectBuilding} />
         
-        {/* Southeast Quadrant: Social & Health (x > 4, z > 4) */}
-        <BuildingModel type="rumahSakit" level={buildings.rumahSakit} position={[12, 0, 8]} onSelect={onSelectBuilding} />
-        <BuildingModel type="klinikHerbal" level={buildings.klinikHerbal} position={[8, 0, 15]} onSelect={onSelectBuilding} />
-        <BuildingModel type="tamanKota" level={buildings.tamanKota} position={[6, 0, 6]} onSelect={onSelectBuilding} />
-        <BuildingModel type="wismaMusafir" level={buildings.wismaMusafir} position={[14, 0, 14]} onSelect={onSelectBuilding} />
-        <BuildingModel type="lapanganPanahan" level={buildings.lapanganPanahan || 0} position={[22, 0, 10]} onSelect={onSelectBuilding} />
+        {/* Southeast Quadrant: Social & Health (Orderly Grid) */}
+        <BuildingModel type="rumahSakit" level={buildings.rumahSakit} position={[8, 0, 8]} onSelect={onSelectBuilding} />
+        <BuildingModel type="klinikHerbal" level={buildings.klinikHerbal} position={[16, 0, 8]} onSelect={onSelectBuilding} />
+        <BuildingModel type="tamanKota" level={buildings.tamanKota} position={[8, 0, 16]} onSelect={onSelectBuilding} />
+        <BuildingModel type="wismaMusafir" level={buildings.wismaMusafir} position={[16, 0, 16]} onSelect={onSelectBuilding} />
+        <BuildingModel type="lapanganPanahan" level={buildings.lapanganPanahan || 0} position={[12, 0, 12]} onSelect={onSelectBuilding} />
         
         {/* Strategic Defense Positions */}
-        <BuildingModel type="gerbangKota" level={buildings.gerbangKota} position={[0, 0, 30]} onSelect={onSelectBuilding} />
+        <BuildingModel type="gerbangKota" level={buildings.gerbangKota} position={[0, 0, 25]} onSelect={onSelectBuilding} />
         <BuildingModel type="bentengPertahanan" level={buildings.bentengPertahanan} position={[0, 0, -35]} onSelect={onSelectBuilding} />
       </Suspense>
 

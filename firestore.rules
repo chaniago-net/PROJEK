@@ -16,10 +16,10 @@ service cloud.firestore {
     
     // Validation Blueprints
     function isValidUser(data) {
-      return data.keys().hasAll(['userId', 'displayName', 'dinar', 'ilmu', 'iman', 'pahala', 'level', 'buildings', 'email', 'hasCompletedTutorial'])
+      return data.keys().hasAll(['userId', 'displayName', 'dinar', 'ilmu', 'iman', 'pahala', 'level', 'buildings', 'hasCompletedTutorial'])
           && data.userId is string
           && data.displayName is string
-          && data.email is string
+          && (data.get('email', '') is string)
           && data.dinar is number
           && data.ilmu is number
           && data.iman is number
@@ -28,6 +28,7 @@ service cloud.firestore {
           && data.buildings is map
           && (data.get('fullName', '') is string)
           && (data.get('studentClass', '') is string)
+          && (data.get('absentNo', '') is string)
           && data.hasCompletedTutorial is bool
           && (data.get('dailyMissions', null) == null || data.dailyMissions is map)
           && data.userId == request.auth.uid;
@@ -40,6 +41,7 @@ service cloud.firestore {
           && data.score is number
           && (data.get('fullName', '') is string)
           && (data.get('studentClass', '') is string)
+          && (data.get('absentNo', '') is string)
           && data.userId == request.auth.uid;
     }
 
@@ -52,8 +54,8 @@ service cloud.firestore {
           // Action: Economy/Game update or Profile update
           incoming().diff(existing()).affectedKeys().hasAll(['updatedAt']) 
           && (
-            incoming().diff(existing()).affectedKeys().hasOnly(['dinar', 'ilmu', 'iman', 'pahala', 'level', 'buildings', 'hasCompletedTutorial', 'updatedAt', 'fullName', 'studentClass', 'dailyMissions'])
-            || incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'updatedAt', 'fullName', 'studentClass'])
+            incoming().diff(existing()).affectedKeys().hasOnly(['dinar', 'ilmu', 'iman', 'pahala', 'level', 'buildings', 'hasCompletedTutorial', 'updatedAt', 'fullName', 'studentClass', 'absentNo', 'dailyMissions'])
+            || incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'updatedAt', 'fullName', 'studentClass', 'absentNo'])
           )
         );
       allow delete: if false; 
@@ -65,7 +67,7 @@ service cloud.firestore {
       allow get: if isSignedIn();
       allow create: if isOwner(userId) && isValidLeaderboard(incoming());
       allow update: if isOwner(userId) && isValidLeaderboard(incoming())
-        && incoming().diff(existing()).affectedKeys().hasOnly(['score', 'username', 'updatedAt', 'fullName', 'studentClass']);
+        && incoming().diff(existing()).affectedKeys().hasOnly(['score', 'username', 'updatedAt', 'fullName', 'studentClass', 'absentNo']);
       allow delete: if false;
     }
   }
